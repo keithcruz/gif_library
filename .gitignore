@@ -1,0 +1,11 @@
+# misc
+.DS_Store
+.vscode/
+
+# python
+__pycache__/
+*.py[cod]
+
+
+# Environment
+env
