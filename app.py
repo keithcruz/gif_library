@@ -1,11 +1,17 @@
 from flask import Flask
 
-app = Flask(__name__)
+from gif import gifs
+from user import users
 
 
-@app.route('/')
-def hello():
-    return {"initial": "app"}
+def create_app():
+    app = Flask(__name__)
+
+    register_blueprints(app)
+
+    return app
 
 
-app.run()
+def register_blueprints(app):
+    app.register_blueprint(gifs.blueprint)
+    app.register_blueprint(users.blueprint)
