@@ -6,7 +6,7 @@ from user.models import User
 blueprint = Blueprint("user", __name__)
 
 
-@blueprint.route("/users/<id>")
+@blueprint.route("/api/users/<id>")
 def get_user(id):
     try:
         user = User.objects.get(id=id)
@@ -17,12 +17,14 @@ def get_user(id):
         return {"message": "not found"}, 404
 
 
-@blueprint.route("/users", methods=["POST"])
+@blueprint.route("/api/users", methods=["POST"])
 def add_user():
     body = request.get_json()
 
     try:
-        user = User(**body).save()
+        user = User(**body)
+        user.hash_password()
+        user.save()
         id = user.id
         return {"id": str(id)}, 200
     except errors.ValidationError:

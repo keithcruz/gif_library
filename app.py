@@ -1,7 +1,7 @@
 from flask import Flask
 
 from config import Config
-from extensions import db
+from extensions import db, bcrypt
 from gif import gifs
 from user import users
 
@@ -23,4 +23,5 @@ def register_blueprints(app):
 
 
 def register_extensions(app):
+    bcrypt.init_app(app)
     db.init_app(app)
