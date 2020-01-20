@@ -1,14 +1,13 @@
 from flask import Flask
 
-from config import Config
 from extensions import db, bcrypt
 from gif import gifs
 from user import users
 
 
-def create_app(config_object=Config):
+def create_app():
     app = Flask(__name__)
-    app.config.from_object(config_object)
+    app.config.from_envvar("ENV_FILE")
 
     register_blueprints(app)
 
