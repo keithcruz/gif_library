@@ -1,6 +1,6 @@
 from flask import Flask
 
-from extensions import bcrypt, db, jwt
+from extensions import bcrypt, db, giphyApi, jwt
 from gif import gifs
 from user import users
 
@@ -24,4 +24,5 @@ def register_blueprints(app):
 def register_extensions(app):
     bcrypt.init_app(app)
     db.init_app(app)
+    giphyApi.init_app(app)
     jwt.init_app(app)
