@@ -24,4 +24,4 @@ Python API for gipy library using Flask and Mongodb.
 
 ```MONGODB_PORT="db port"```
 
-```GIPHY_API_KEY="key to access the giphy api"
+```GIPHY_API_KEY="key to access the giphy api"```
