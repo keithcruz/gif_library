@@ -8,11 +8,13 @@ Created with python 3.7.6
 
 ```pip install -r requirements.txt```
 
+
 Create the necessary environment variables
 
 ```export FLASK_APP=app.py```
 
 ```export ENV_FILE="path to .env file```
+
 
 .env file contents:
 
@@ -21,3 +23,5 @@ Create the necessary environment variables
 ```MONGODB_HOST="db hostname"```
 
 ```MONGODB_PORT="db port"```
+
+```GIPHY_API_KEY="key to access the giphy api"
