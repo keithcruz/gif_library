@@ -1,5 +1,11 @@
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import create_access_token, create_refresh_token
+from flask_jwt_extended import (
+    create_access_token,
+    create_refresh_token,
+    get_jwt_identity,
+    jwt_refresh_token_required,
+    jwt_required
+)
 from mongoengine import errors
 
 from user.models import User
@@ -17,6 +23,7 @@ def generate_tokens(id):
 
 
 @blueprint.route("/api/users/<id>")
+@jwt_required
 def get_user(id):
     try:
         user = User.objects.get(id=id)
@@ -60,3 +67,11 @@ def login_user():
         return {"message": "bad request"}, 400
     except User.DoesNotExist:
         return {"message": "Invalid credentials"}, 401
+
+
+@blueprint.route("/api/users/refresh")
+@jwt_refresh_token_required
+def token_refresh():
+    current_user = get_jwt_identity()
+    new_token = create_access_token(identity=current_user, fresh=False)
+    return {"token": new_token}, 200
