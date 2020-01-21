@@ -1,6 +1,7 @@
 from flask import Blueprint
 from flask_jwt_extended import jwt_required
 from requests.exceptions import RequestException
+
 from extensions import giphyApi
 
 blueprint = Blueprint("gif", __name__)
