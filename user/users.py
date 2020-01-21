@@ -2,12 +2,14 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import (
     create_access_token,
     create_refresh_token,
+    fresh_jwt_required,
     get_jwt_identity,
     jwt_refresh_token_required,
     jwt_required
 )
 from mongoengine import errors
 
+from gif.models import Gif
 from user.models import User
 
 blueprint = Blueprint("user", __name__)
@@ -43,12 +45,33 @@ def add_user():
         user.hash_password()
         user.save()
 
-        return generate_tokens(str(id)), 200
+        return generate_tokens(str(user.id)), 200
 
     except errors.ValidationError:
         return {"message": "bad request"}, 400
     except errors.NotUniqueError:
         return {"message": "conflict"}, 409
+
+
+@blueprint.route("/api/users", methods=["PUT"])
+@fresh_jwt_required
+def update_user():
+    try:
+        body = request.get_json()
+
+        gifs = [Gif(**gif) for gif in body.get("gifs", [])]
+
+        user_id = get_jwt_identity()
+        user = User.objects.get(id=str(user_id))
+        user.update(gifs=gifs)
+        user.save()
+
+        return {"message": "resource updated successfully"}, 204
+
+    except errors.ValidationError:
+        return {"message": "bad request"}, 400
+    except User.DoesNotExist:
+        return {"message": "Invalid credentials"}, 401
 
 
 @blueprint.route("/api/users/login", methods=["POST"])
@@ -61,7 +84,7 @@ def login_user():
         if not is_authed:
             return {"message": "Invalid credentials"}, 401
 
-        return generate_tokens(str(id)), 200
+        return generate_tokens(str(user.id)), 200
 
     except errors.ValidationError:
         return {"message": "bad request"}, 400
@@ -72,6 +95,6 @@ def login_user():
 @blueprint.route("/api/users/refresh")
 @jwt_refresh_token_required
 def token_refresh():
-    current_user = get_jwt_identity()
-    new_token = create_access_token(identity=current_user, fresh=False)
+    user_id = get_jwt_identity()
+    new_token = create_access_token(identity=user_id, fresh=False)
     return {"token": new_token}, 200
