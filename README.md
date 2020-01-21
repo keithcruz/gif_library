@@ -1,5 +1,5 @@
 ## gif_library
-Python API for gipy library using Flask and Mongodb.
+Python API for giphy library using Flask and Mongodb.
 
 ## Set up
 ### Created with python 3.7.6
@@ -9,7 +9,7 @@ Python API for gipy library using Flask and Mongodb.
 ```pip install -r requirements.txt```
 
 
-### Create the necessary environment variables
+### Create the required environment variables
 
 ```export FLASK_APP=app.py```
 
@@ -28,6 +28,6 @@ Python API for gipy library using Flask and Mongodb.
 
 ```JWT_SECRET_KEY = "secret to use for jwt"```
 
-```JWT_REFRESH_TOKEN_EXPIRES="int (seconds)```
+```JWT_REFRESH_TOKEN_EXPIRES="int (seconds)"```
 
-```JWT_ACCESS_TOKEN_EXPIRES=int (seconds)```
+```JWT_ACCESS_TOKEN_EXPIRES="int (seconds)"```
