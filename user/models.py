@@ -1,11 +1,15 @@
 from extensions import db, bcrypt
-from gif.models import Gif
+
+
+class UserGif(db.EmbeddedDocument):
+    gif_id = db.StringField(required=True)
+    category = db.StringField(required=True)
 
 
 class User(db.Document):
     email = db.EmailField(required=True, unique=True)
-    password = db.StringField(required=True, min_length=6)
-    gifs = db.ListField(db.EmbeddedDocumentField(Gif), default=list)
+    password = db.StringField(required=True, min_length=6, max_len=100)
+    gifs = db.ListField(db.EmbeddedDocumentField(UserGif), default=list)
 
     def hash_password(self):
         self.password = bcrypt.generate_password_hash(
