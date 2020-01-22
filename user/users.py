@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request
 from flask_jwt_extended import (
     create_access_token,
     create_refresh_token,
@@ -9,10 +9,12 @@ from flask_jwt_extended import (
 )
 from mongoengine import errors
 
-from gif.models import Gif
-from user.models import User
+from user.models import User, UserGif
+from user.serializers import UserSchema
 
 blueprint = Blueprint("user", __name__)
+
+user_schema = UserSchema()
 
 
 def generate_tokens(id):
@@ -29,7 +31,8 @@ def generate_tokens(id):
 def get_user(id):
     try:
         user = User.objects.get(id=id)
-        return jsonify(user), 200
+        return user_schema.dump(user)
+
     except errors.ValidationError:
         return {"message": "bad request"}, 400
     except User.DoesNotExist:
@@ -59,14 +62,14 @@ def update_user():
     try:
         body = request.get_json()
 
-        gifs = [Gif(**gif) for gif in body.get("gifs", [])]
+        gifs = [UserGif(**gif) for gif in body.get("gifs", [])]
 
         user_id = get_jwt_identity()
         user = User.objects.get(id=str(user_id))
         user.update(gifs=gifs)
         user.save()
 
-        return {"message": "resource updated successfully"}, 204
+        return user_schema.dump(user), 200
 
     except errors.ValidationError:
         return {"message": "bad request"}, 400
@@ -84,7 +87,13 @@ def login_user():
         if not is_authed:
             return {"message": "Invalid credentials"}, 401
 
-        return generate_tokens(str(user.id)), 200
+        user_json = user_schema.dump(user)
+        tokens = generate_tokens(str(user.id))
+
+        return {
+            "user": user_json,
+            "tokens": tokens
+        }, 200
 
     except errors.ValidationError:
         return {"message": "bad request"}, 400
