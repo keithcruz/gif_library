@@ -3,6 +3,7 @@ from flask import Flask
 from extensions import bcrypt, db, giphyApi, jwt
 from gif import gifs
 from user import users
+from error_handling import register_errors
 
 
 def create_app():
@@ -12,6 +13,8 @@ def create_app():
     register_blueprints(app)
 
     register_extensions(app)
+
+    register_errors(app)
 
     return app
 

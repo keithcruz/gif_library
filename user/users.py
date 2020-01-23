@@ -48,15 +48,9 @@ def generate_tokens(id):
 @blueprint.route("/api/users", methods=["GET"])
 @jwt_required
 def get_user():
-    try:
-        user_id = get_jwt_identity()
-        user = User.objects.get(id=user_id)
-        return user_schema.dump(user)
-
-    except errors.ValidationError:
-        return {"message": "bad request"}, 400
-    except User.DoesNotExist:
-        return {"message": "not found"}, 404
+    user_id = get_jwt_identity()
+    user = User.objects.get(id=user_id)
+    return user_schema.dump(user)
 
 
 @blueprint.route("/api/users", methods=["POST"])
@@ -69,8 +63,6 @@ def add_user(args):
 
         return generate_tokens(str(user.id)), 200
 
-    except errors.ValidationError:
-        return {"message": "bad request"}, 400
     except errors.NotUniqueError:
         return {"message": "conflict"}, 409
 
@@ -79,44 +71,32 @@ def add_user(args):
 @use_args(update_args)
 @fresh_jwt_required
 def update_user(args):
-    try:
-        gifs = [UserGif(**gif) for gif in args.get("gifs", [])]
+    gifs = [UserGif(**gif) for gif in args.get("gifs", [])]
 
-        user_id = get_jwt_identity()
-        user = User.objects.get(id=str(user_id))
-        user.update(gifs=gifs)
-        user.reload()
+    user_id = get_jwt_identity()
+    user = User.objects.get(id=str(user_id))
+    user.update(gifs=gifs)
+    user.reload()
 
-        return user_schema.dump(user), 200
-
-    except errors.ValidationError:
-        return {"message": "bad request"}, 400
-    except User.DoesNotExist:
-        return {"message": "Invalid credentials"}, 401
+    return user_schema.dump(user), 200
 
 
 @blueprint.route("/api/users/login", methods=["POST"])
 @use_args(login_args)
 def login_user(args):
-    try:
-        user = User.objects.get(email=args.get("email"))
-        is_authed = user.verify_password(args.get("password"))
+    user = User.objects.get(email=args.get("email"))
+    is_authed = user.verify_password(args.get("password"))
 
-        if not is_authed:
-            return {"message": "Invalid credentials"}, 401
-
-        user_json = user_schema.dump(user)
-        tokens = generate_tokens(str(user.id))
-
-        return {
-            "user": user_json,
-            "tokens": tokens
-        }, 200
-
-    except errors.ValidationError:
-        return {"message": "bad request"}, 400
-    except User.DoesNotExist:
+    if not is_authed:
         return {"message": "Invalid credentials"}, 401
+
+    user_json = user_schema.dump(user)
+    tokens = generate_tokens(str(user.id))
+
+    return {
+        "user": user_json,
+        "tokens": tokens
+    }, 200
 
 
 @blueprint.route("/api/users/refresh")
