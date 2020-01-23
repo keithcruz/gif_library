@@ -1,6 +1,6 @@
 from flask import Flask
 
-from extensions import bcrypt, db, giphyApi, jwt
+from extensions import bcrypt, db, giphyApi, jwt, cors
 from gif import gifs
 from user import users
 from error_handling import register_errors
@@ -20,6 +20,10 @@ def create_app():
 
 
 def register_blueprints(app):
+    origins = app.config.get("CORS_ORIGIN_WHITELIST")
+    cors.init_app(gifs.blueprint, origins=origins)
+    cors.init_app(users.blueprint, origins=origins)
+
     app.register_blueprint(gifs.blueprint)
     app.register_blueprint(users.blueprint)
 

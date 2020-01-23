@@ -31,3 +31,7 @@ Python API for giphy library using Flask and Mongodb.
 ```JWT_REFRESH_TOKEN_EXPIRES="int (seconds)"```
 
 ```JWT_ACCESS_TOKEN_EXPIRES="int (seconds)"```
+
+```PROPOGATE_EXCEPTIONS = "TRUE"```
+
+```CORS_ORIGIN_WHITELIST = [ "at least need 'localhost:3000' for dev]```
