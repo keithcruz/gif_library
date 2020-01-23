@@ -1,4 +1,4 @@
-from flask import Blueprint, request
+from flask import Blueprint
 from flask_jwt_extended import (
     create_access_token,
     create_refresh_token,
@@ -8,13 +8,25 @@ from flask_jwt_extended import (
     jwt_required
 )
 from mongoengine import errors
+from webargs import fields
+from webargs.flaskparser import use_args
 
 from user.models import User, UserGif
-from user.serializers import UserSchema
+from user.serializers import UserSchema, UserGifSchema
 
 blueprint = Blueprint("user", __name__)
 
 user_schema = UserSchema()
+
+
+auth_args = {
+    "email": fields.Email(required=True),
+    "password": fields.Str(required=True)
+}
+
+update_args = {
+    "gifs": fields.Nested(UserGifSchema, many=True)
+}
 
 
 def generate_tokens(id):
@@ -26,11 +38,12 @@ def generate_tokens(id):
     }
 
 
-@blueprint.route("/api/users/<id>")
+@blueprint.route("/api/users", methods=["GET"])
 @jwt_required
-def get_user(id):
+def get_user():
     try:
-        user = User.objects.get(id=id)
+        user_id = get_jwt_identity()
+        user = User.objects.get(id=user_id)
         return user_schema.dump(user)
 
     except errors.ValidationError:
@@ -40,11 +53,10 @@ def get_user(id):
 
 
 @blueprint.route("/api/users", methods=["POST"])
-def add_user():
-    body = request.get_json()
-
+@use_args(auth_args)
+def add_user(args):
     try:
-        user = User(**body)
+        user = User(**args)
         user.hash_password()
         user.save()
 
@@ -57,17 +69,16 @@ def add_user():
 
 
 @blueprint.route("/api/users", methods=["PUT"])
+@use_args(update_args)
 @fresh_jwt_required
-def update_user():
+def update_user(args):
     try:
-        body = request.get_json()
-
-        gifs = [UserGif(**gif) for gif in body.get("gifs", [])]
+        gifs = [UserGif(**gif) for gif in args.get("gifs", [])]
 
         user_id = get_jwt_identity()
         user = User.objects.get(id=str(user_id))
         user.update(gifs=gifs)
-        user.save()
+        user.reload()
 
         return user_schema.dump(user), 200
 
@@ -78,11 +89,11 @@ def update_user():
 
 
 @blueprint.route("/api/users/login", methods=["POST"])
-def login_user():
-    body = request.get_json()
+@use_args(auth_args)
+def login_user(args):
     try:
-        user = User.objects.get(email=body.get("email"))
-        is_authed = user.verify_password(body.get("password"))
+        user = User.objects.get(email=args.get("email"))
+        is_authed = user.verify_password(args.get("password"))
 
         if not is_authed:
             return {"message": "Invalid credentials"}, 401
