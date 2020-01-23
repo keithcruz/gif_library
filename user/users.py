@@ -8,7 +8,7 @@ from flask_jwt_extended import (
     jwt_required
 )
 from mongoengine import errors
-from webargs import fields
+from webargs import fields, validate
 from webargs.flaskparser import use_args
 
 from user.models import User, UserGif
@@ -19,9 +19,16 @@ blueprint = Blueprint("user", __name__)
 user_schema = UserSchema()
 
 
-auth_args = {
+login_args = {
     "email": fields.Email(required=True),
     "password": fields.Str(required=True)
+}
+
+register_args = {
+    "email": fields.Email(required=True),
+    "password": fields.Str(
+        required=True, validate=[validate.Length(min=6, max=100)]
+    )
 }
 
 update_args = {
@@ -53,7 +60,7 @@ def get_user():
 
 
 @blueprint.route("/api/users", methods=["POST"])
-@use_args(auth_args)
+@use_args(register_args)
 def add_user(args):
     try:
         user = User(**args)
@@ -89,7 +96,7 @@ def update_user(args):
 
 
 @blueprint.route("/api/users/login", methods=["POST"])
-@use_args(auth_args)
+@use_args(login_args)
 def login_user(args):
     try:
         user = User.objects.get(email=args.get("email"))
