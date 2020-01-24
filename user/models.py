@@ -4,6 +4,7 @@ from extensions import db, bcrypt
 class UserGif(db.EmbeddedDocument):
     gif_id = db.StringField(required=True)
     category = db.StringField(required=True)
+    url = db.URLField(require=True)
 
 
 class User(db.Document):

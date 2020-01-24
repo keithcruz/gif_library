@@ -21,8 +21,8 @@ def create_app():
 
 def register_blueprints(app):
     origins = app.config.get("CORS_ORIGIN_WHITELIST")
-    cors.init_app(gifs.blueprint, origins=origins)
-    cors.init_app(users.blueprint, origins=origins)
+    cors.init_app(gifs.blueprint, origins=origins, supports_credentials=True)
+    cors.init_app(users.blueprint, origins=origins, supports_credentials=True)
 
     app.register_blueprint(gifs.blueprint)
     app.register_blueprint(users.blueprint)
