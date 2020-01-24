@@ -1,11 +1,12 @@
-from flask import Blueprint
+from flask import Blueprint, jsonify
 from flask_jwt_extended import (
     create_access_token,
     create_refresh_token,
-    fresh_jwt_required,
     get_jwt_identity,
     jwt_refresh_token_required,
-    jwt_required
+    jwt_required,
+    set_access_cookies,
+    set_refresh_cookies
 )
 from mongoengine import errors
 from webargs import fields, validate
@@ -69,7 +70,7 @@ def add_user(args):
 
 @blueprint.route("/api/users", methods=["PUT"])
 @use_args(update_args)
-@fresh_jwt_required
+@jwt_required
 def update_user(args):
     gifs = [UserGif(**gif) for gif in args.get("gifs", [])]
 
@@ -90,13 +91,14 @@ def login_user(args):
     if not is_authed:
         return {"message": "Invalid credentials"}, 401
 
-    user_json = user_schema.dump(user)
     tokens = generate_tokens(str(user.id))
 
-    return {
-        "user": user_json,
-        "tokens": tokens
-    }, 200
+    resp = jsonify({"login": True})
+    resp.set_cookie("my_key", "my_value")
+    set_access_cookies(resp, tokens.get("token"))
+    set_refresh_cookies(resp, tokens.get("refreshToken"))
+
+    return resp, 200
 
 
 @blueprint.route("/api/users/refresh")

@@ -32,6 +32,22 @@ Python API for giphy library using Flask and Mongodb.
 
 ```JWT_ACCESS_TOKEN_EXPIRES="int (seconds)"```
 
+```JWT_TOKEN_LOCATION=["cookies"]```
+
+```JWT_COOKIE_SECURE="FALSE" (for dev, true in production)```
+
+```JWT_ACCESS_COOKIE_PATH="paths to send jwt"```
+
+```JWT_ACCESS_CSRF_COOKIE_PATH="paths to send csrf"```
+
+```JWT_REFRESH_COOKIE_PATH="paths to send reresh"```
+
+```JWT_REFRESH_CSRF_COOKIE_PATH="paths to send reresh csrf"```
+
+```JWT_COOKIE_CSRF_PROTECT="TRUE"```
+
+```JWT_CSRF_METHODS=["POST", "PUT", "PATCH", "DELETE", "GET"]```
+
 ```PROPOGATE_EXCEPTIONS = "TRUE"```
 
 ```CORS_ORIGIN_WHITELIST = [ "at least need 'localhost:3000' for dev]```
