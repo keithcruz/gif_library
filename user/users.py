@@ -62,7 +62,14 @@ def add_user(args):
         user.hash_password()
         user.save()
 
-        return generate_tokens(str(user.id)), 200
+        tokens = generate_tokens(str(user.id))
+
+        response = jsonify({"login": True})
+        response.set_cookie("my_key", "my_value")
+        set_access_cookies(response, tokens.get("token"))
+        set_refresh_cookies(response, tokens.get("refreshToken"))
+
+        return response, 200
 
     except errors.NotUniqueError:
         return {"message": "conflict"}, 409
@@ -93,12 +100,12 @@ def login_user(args):
 
     tokens = generate_tokens(str(user.id))
 
-    resp = jsonify({"login": True})
-    resp.set_cookie("my_key", "my_value")
-    set_access_cookies(resp, tokens.get("token"))
-    set_refresh_cookies(resp, tokens.get("refreshToken"))
+    response = jsonify({"login": True})
+    response.set_cookie("my_key", "my_value")
+    set_access_cookies(response, tokens.get("token"))
+    set_refresh_cookies(response, tokens.get("refreshToken"))
 
-    return resp, 200
+    return response, 200
 
 
 @blueprint.route("/api/users/refresh")
