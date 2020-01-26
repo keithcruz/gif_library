@@ -6,7 +6,8 @@ from flask_jwt_extended import (
     jwt_refresh_token_required,
     jwt_required,
     set_access_cookies,
-    set_refresh_cookies
+    set_refresh_cookies,
+    unset_jwt_cookies
 )
 from mongoengine import errors
 from webargs import fields, validate
@@ -106,6 +107,13 @@ def login_user(args):
     set_refresh_cookies(response, tokens.get("refreshToken"))
 
     return response, 200
+
+
+@blueprint.route("/api/users/logout", methods=["POST"])
+def logout_user():
+    resp = jsonify({"logout": True})
+    unset_jwt_cookies(resp)
+    return resp, 200
 
 
 @blueprint.route("/api/users/refresh")
