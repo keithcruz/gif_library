@@ -1,28 +1,14 @@
 ## gif_library
 Python API for giphy library using Flask and Mongodb.
 
-## Set up
-### Created with python 3.7.6
 
-```python -m venv env```
+### .env file contents for development:
 
-```pip install -r requirements.txt```
+```MONGODB_DB="gif-library-dev"```
 
+```MONGODB_HOST="flaskdb"```
 
-### Create the required environment variables
-
-```export FLASK_APP=app.py```
-
-```export ENV_FILE="path to .env file```
-
-
-### .env file contents:
-
-```MONGODB_DB="name of the db to use"```
-
-```MONGODB_HOST="db hostname"```
-
-```MONGODB_PORT="db port"```
+```MONGODB_PORT=27017```
 
 ```GIPHY_API_KEY="key to access the giphy api"```
 
@@ -48,6 +34,16 @@ Python API for giphy library using Flask and Mongodb.
 
 ```JWT_CSRF_METHODS=["POST", "PUT", "PATCH", "DELETE", "GET"]```
 
-```PROPOGATE_EXCEPTIONS = "TRUE"```
+```PROPOGATE_EXCEPTIONS="TRUE"```
 
-```CORS_ORIGIN_WHITELIST = [ "at least need 'localhost:3000' for dev]```
+```CORS_ORIGIN_WHITELIST = [ "at least need 'http://localhost:3000' for dev]```
+
+
+## Set up
+### Install docker along with docker-compose
+
+From the project directory execute:
+
+```docker-compose build```
+
+```docker-compose up```
