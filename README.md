@@ -14,8 +14,6 @@ Python API for giphy library using Flask and Mongodb.
 
 ```JWT_SECRET_KEY = "secret to use for jwt"```
 
-```JWT_REFRESH_TOKEN_EXPIRES="int (seconds)"```
-
 ```JWT_ACCESS_TOKEN_EXPIRES="int (seconds)"```
 
 ```JWT_TOKEN_LOCATION=["cookies"]```
@@ -25,10 +23,6 @@ Python API for giphy library using Flask and Mongodb.
 ```JWT_ACCESS_COOKIE_PATH="paths to send jwt"```
 
 ```JWT_ACCESS_CSRF_COOKIE_PATH="paths to send csrf"```
-
-```JWT_REFRESH_COOKIE_PATH="paths to send reresh"```
-
-```JWT_REFRESH_CSRF_COOKIE_PATH="paths to send reresh csrf"```
 
 ```JWT_COOKIE_CSRF_PROTECT="TRUE"```
 

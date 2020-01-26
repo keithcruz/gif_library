@@ -1,12 +1,9 @@
 from flask import Blueprint, jsonify
 from flask_jwt_extended import (
     create_access_token,
-    create_refresh_token,
     get_jwt_identity,
-    jwt_refresh_token_required,
     jwt_required,
     set_access_cookies,
-    set_refresh_cookies,
     unset_jwt_cookies
 )
 from mongoengine import errors
@@ -38,15 +35,6 @@ update_args = {
 }
 
 
-def generate_tokens(id):
-    token = create_access_token(identity=id, fresh=True)
-    refresh_token = create_refresh_token(id)
-    return {
-        "token": token,
-        "refreshToken": refresh_token
-    }
-
-
 @blueprint.route("/api/users", methods=["GET"])
 @jwt_required
 def get_user():
@@ -63,12 +51,10 @@ def add_user(args):
         user.hash_password()
         user.save()
 
-        tokens = generate_tokens(str(user.id))
+        token = create_access_token(str(user.id))
 
         response = jsonify({"login": True})
-        response.set_cookie("my_key", "my_value")
-        set_access_cookies(response, tokens.get("token"))
-        set_refresh_cookies(response, tokens.get("refreshToken"))
+        set_access_cookies(response, token)
 
         return response, 200
 
@@ -99,12 +85,10 @@ def login_user(args):
     if not is_authed:
         return {"message": "Invalid credentials"}, 401
 
-    tokens = generate_tokens(str(user.id))
+    token = create_access_token(str(user.id))
 
     response = jsonify({"login": True})
-    response.set_cookie("my_key", "my_value")
-    set_access_cookies(response, tokens.get("token"))
-    set_refresh_cookies(response, tokens.get("refreshToken"))
+    set_access_cookies(response, token)
 
     return response, 200
 
@@ -114,11 +98,3 @@ def logout_user():
     resp = jsonify({"logout": True})
     unset_jwt_cookies(resp)
     return resp, 200
-
-
-@blueprint.route("/api/users/refresh")
-@jwt_refresh_token_required
-def token_refresh():
-    user_id = get_jwt_identity()
-    new_token = create_access_token(identity=user_id, fresh=False)
-    return {"token": new_token}, 200
