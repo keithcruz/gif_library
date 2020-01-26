@@ -18,7 +18,8 @@ class GiphyApi:
                 "rating": "g",
                 "q": query,
                 "offset": offset
-            }
+            },
+            timeout=10
         )
 
         return result.json()
