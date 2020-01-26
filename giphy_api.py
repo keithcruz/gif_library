@@ -14,7 +14,7 @@ class GiphyApi:
             f"{self.giphy_url}/search",
             params={
                 "api_key": self.api_key,
-                "limit": 20,
+                "limit": 12,
                 "rating": "g",
                 "q": query
             }
