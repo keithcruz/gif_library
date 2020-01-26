@@ -14,7 +14,7 @@ services:
     depends_on:
       - flaskdb
   flaskdb:
-    image: mongo:latest
+    image: mongo:4.2.2
     container_name: "flaskdb"
     environment:
       - MONGO_INITDB_DATABASE=gif-library-dev
@@ -24,7 +24,7 @@ services:
       - ./data/db:/usr/data/db
     ports:
       - 27017:27017
-    command: mongod --smallfiles --logpath=/dev/null
+    command: mongod --logpath=/dev/null
 networks:
   default:
     name: web
