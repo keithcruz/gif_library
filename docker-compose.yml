@@ -1,0 +1,30 @@
+version: '3.7'
+services:
+  web:
+    build: .
+    command: flask run --host=0.0.0.0
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+    environment:
+      - FLASK_ENV=development
+      - FLASK_APP=app.py
+      - ENV_FILE=./.env
+    depends_on:
+      - flaskdb
+  flaskdb:
+    image: mongo:latest
+    container_name: "flaskdb"
+    environment:
+      - MONGO_INITDB_DATABASE=gif-library-dev
+      - MONGO_DATA_DIR=/usr/data/db
+      - MONGO_LOG_DIR=/dev/null
+    volumes:
+      - ./data/db:/usr/data/db
+    ports:
+      - 27017:27017
+    command: mongod --smallfiles --logpath=/dev/null
+networks:
+  default:
+    name: web
