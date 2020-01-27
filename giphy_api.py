@@ -23,14 +23,3 @@ class GiphyApi:
         )
 
         return result.json()
-
-    def get(self, ids):
-        result = requests.get(
-            f"{self.giphy_url}",
-            params={
-                "api_key": self.api_key,
-                "ids": ids
-            }
-        )
-
-        return result.json()
