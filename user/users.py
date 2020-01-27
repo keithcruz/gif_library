@@ -17,12 +17,13 @@ blueprint = Blueprint("user", __name__)
 
 user_schema = UserSchema()
 
-
+# Args expected in the login route
 login_args = {
     "email": fields.Email(required=True),
     "password": fields.Str(required=True)
 }
 
+# Args expected in the register route
 register_args = {
     "email": fields.Email(required=True),
     "password": fields.Str(
@@ -30,6 +31,7 @@ register_args = {
     )
 }
 
+# Args expected in the update user route
 update_args = {
     "gifs": fields.Nested(UserGifSchema, many=True)
 }
@@ -47,6 +49,7 @@ def get_user():
 @use_args(register_args)
 def add_user(args):
     try:
+        # Attempt to create the user and hash the password.
         user = User(**args)
         user.hash_password()
         user.save()
@@ -66,8 +69,10 @@ def add_user(args):
 @use_args(update_args)
 @jwt_required
 def update_user(args):
+    # Create the gif list base on UserGif model
     gifs = [UserGif(**gif) for gif in args.get("gifs", [])]
 
+    # Get the user from the jwt and update
     user_id = get_jwt_identity()
     user = User.objects.get(id=str(user_id))
     user.update(gifs=gifs)

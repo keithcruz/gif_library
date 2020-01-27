@@ -46,3 +46,5 @@ From the project directory execute:
 
 - Add JWT refresh tokens and lower the time to live for tokens
 - Complete unit testing
+- Type annotations
+- Doc strings
