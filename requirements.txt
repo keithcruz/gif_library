@@ -21,7 +21,7 @@ mongoengine==0.19.1
 pycodestyle==2.5.0
 pycparser==2.19
 pyflakes==2.1.1
-PyJWT==1.7.1
+PyJWT==2.4.0
 pymongo==3.10.1
 requests==2.22.0
 six==1.14.0
